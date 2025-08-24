@@ -27,109 +27,118 @@
   const projectId = params.get("id");
 
   async function loadProject() {
-    const container = document.querySelector(".projects");
-    const descContainer = document.querySelector(".description");
-    const youtubeContainer = document.querySelector(".youtube");
-    container.innerHTML = "";
-    descContainer.innerHTML = "";
-    youtubeContainer.innerHTML = "";
+  const container = document.querySelector(".projects");
+  const descContainer = document.querySelector(".description");
+  const youtubeContainer = document.querySelector(".youtube");
+  const rightContent = document.querySelector(".right-content"); // ✅ place for "Visit my website"
+  container.innerHTML = "";
+  descContainer.innerHTML = "";
+  youtubeContainer.innerHTML = "";
 
-    if (!projectId) {
-      container.innerHTML = "<p>No project ID provided.</p>";
-      return;
-    }
-
-    // Fetch project doc
-    const docRef = doc(db, "projects", projectId);
-    const docSnap = await getDoc(docRef);
-
-    if (!docSnap.exists()) {
-      container.innerHTML = "<p>Project not found.</p>";
-      return;
-    }
-
-    const data = docSnap.data();
-
-    // Title
-    const title = document.querySelector("h2");
-    if (title) title.textContent = data.name || "(no name)";
-
-    // Main image
-    if (data.image) {
-      const mainImg = document.querySelector(".left img");
-      if (mainImg) mainImg.src = data.image;
-    }
-
-    // Description
-    if (data.description) {
-      descContainer.textContent = data.description;
-    }
-
-    // Normalize YouTube link
-function getEmbedUrl(url) {
-  if (!url) return null;
-  if (url.includes("watch?v=")) {
-    return url.replace("watch?v=", "embed/");
+  if (!projectId) {
+    container.innerHTML = "<p>No project ID provided.</p>";
+    return;
   }
-  if (url.includes("youtu.be/")) {
-    return url.replace("youtu.be/", "www.youtube.com/embed/");
+
+  // Fetch project doc
+  const docRef = doc(db, "projects", projectId);
+  const docSnap = await getDoc(docRef);
+
+  if (!docSnap.exists()) {
+    container.innerHTML = "<p>Project not found.</p>";
+    return;
   }
-  if (url.includes("shorts/")) {
-    return url.replace("shorts/", "embed/");
+
+  const data = docSnap.data();
+
+  // Title
+  const title = document.querySelector("h2");
+  if (title) title.textContent = data.name || "(no name)";
+
+  // Main image
+  if (data.image) {
+    const mainImg = document.querySelector(".left img");
+    if (mainImg) mainImg.src = data.image;
   }
-  return url;
-}
 
-if (data.youtube) {
-  const youtubeDiv = document.querySelector(".youtube");
-  const embedUrl = getEmbedUrl(data.youtube);
-  youtubeDiv.innerHTML = `
-    <iframe width="100%" height="315" 
-      src="${embedUrl}" 
-      frameborder="0" allowfullscreen></iframe>
-  `;
-}
+  // Description
+  if (data.description) {
+    descContainer.textContent = data.description;
+  }
 
+  // ✅ Add clickable "Visit my website" if link exists
+  if (data.link && data.link.trim() !== "") {
+    const linkEl = document.createElement("a");
+    linkEl.href = data.link;
+    linkEl.textContent = "Visit my website";
+    linkEl.target = "_blank"; // open in new tab
+    linkEl.classList.add("visit-link"); // for styling
+    rightContent.appendChild(linkEl);
+  }
 
-    // Subcollection images
-    const imagesRef = collection(db, `projects/${projectId}/images`);
-    const imagesSnap = await getDocs(imagesRef);
-    imagesSnap.forEach(docSnap => {
-      const imagesData = docSnap.data();
-      Object.values(imagesData).forEach(url => {
-        const img = document.createElement("img");
-        img.src = url;
-        img.alt = data.name || "project image";
-        img.classList.add("project-image");
-        container.appendChild(img);
+  // Normalize YouTube link
+  function getEmbedUrl(url) {
+    if (!url) return null;
+    if (url.includes("watch?v=")) {
+      return url.replace("watch?v=", "embed/");
+    }
+    if (url.includes("youtu.be/")) {
+      return url.replace("youtu.be/", "www.youtube.com/embed/");
+    }
+    if (url.includes("shorts/")) {
+      return url.replace("shorts/", "embed/");
+    }
+    return url;
+  }
+
+  if (data.youtube) {
+    const youtubeDiv = document.querySelector(".youtube");
+    const embedUrl = getEmbedUrl(data.youtube);
+    youtubeDiv.innerHTML = `
+      <iframe width="100%" height="315" 
+        src="${embedUrl}" 
+        frameborder="0" allowfullscreen></iframe>
+    `;
+  }
+
+  // Subcollection images
+  const imagesRef = collection(db, `projects/${projectId}/images`);
+  const imagesSnap = await getDocs(imagesRef);
+  imagesSnap.forEach(docSnap => {
+    const imagesData = docSnap.data();
+    Object.values(imagesData).forEach(url => {
+      const img = document.createElement("img");
+      img.src = url;
+      img.alt = data.name || "project image";
+      img.classList.add("project-image");
+      container.appendChild(img);
+    });
+  });
+
+  // Enable overlay on project images
+  function enableImageOverlay() {
+    const overlay = document.getElementById("imageOverlay");
+    const overlayImage = document.getElementById("overlayImage");
+    const backButton = document.getElementById("backButton");
+
+    document.querySelectorAll(".projects img").forEach(img => {
+      img.addEventListener("click", () => {
+        overlay.classList.add("active");
+        overlayImage.src = img.src;
       });
     });
-    
-// Enable overlay on project images
-function enableImageOverlay() {
-  const overlay = document.getElementById("imageOverlay");
-  const overlayImage = document.getElementById("overlayImage");
-  const backButton = document.getElementById("backButton");
 
-  document.querySelectorAll(".projects img").forEach(img => {
-    img.addEventListener("click", () => {
-      overlay.classList.add("active");
-      overlayImage.src = img.src;
+    // Close overlay on back button
+    backButton.addEventListener("click", () => {
+      overlay.classList.remove("active");
+      overlayImage.src = "";
     });
-  });
+  }
 
-  // Close overlay on back button
-  backButton.addEventListener("click", () => {
-    overlay.classList.remove("active");
-    overlayImage.src = "";
-  });
+  // Call after images are loaded
+  enableImageOverlay();
 }
 
-// Call after images are loaded
-enableImageOverlay();
-
-
-  }
 
   // ✅ Call the function
   loadProject();
@@ -151,7 +160,7 @@ enableImageOverlay();
     <div class="container">
       <!-- Left Side -->
       <div class="left">
-        <div class="description">Still loading...</div>
+        <div class="description"></div>
         <img src="images/loading.png" alt="About Me Image">
 
       </div>
