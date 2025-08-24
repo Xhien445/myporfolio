@@ -54,6 +54,12 @@
       animation: scroll 40s linear infinite;
       width: max-content;
       margin-bottom: 2rem;
+      -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  overflow-x: auto; /* keeps them scrollable if too wide */
+  -webkit-overflow-scrolling: touch; /* ✅ smooth on iOS */
     }
 
     .slideshow img {
@@ -62,6 +68,9 @@
       border-radius: 10px;
       flex-shrink: 0;
       box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+      overflow-x: auto; /* keeps them scrollable if too wide */
+  -webkit-overflow-scrolling: touch; /* ✅ smooth on iOS */
+       margin-right: 1rem; /* ✅ always enforces spacing */
     }
  .projects {
   margin-left: 1rem;
