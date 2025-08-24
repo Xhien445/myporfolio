@@ -1,0 +1,326 @@
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'New Rocker', cursive;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      padding-top: 8rem; /* space for future header overlap */
+    overflow-y: scroll; /* keep vertical scrolling */
+  scrollbar-width: none; /* Firefox */
+        cursor: none;
+
+
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge hide scrollbar */
+}
+
+    h2 {
+      font-family: 'UnifrakturMaguntia', cursive;
+      font-size: 3rem;
+      margin: 0 0 2rem 0;
+      font-weight: normal;
+      border-bottom: 1px solid #555;
+      padding-bottom: 0.5rem;
+      width: 100%;
+      max-width: 1100px;
+      align-self: center;
+    }
+
+    .main {
+      flex: 1; /* push footer down */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    
+
+    .left, .right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .left img {
+  width: auto;
+  max-width: 1100px;
+  max-height: 681px;  /* ✅ cap height so it doesn’t dominate */
+  height: auto;
+  border-radius: 10px;
+  object-fit: contain; /* ✅ keeps proportions */
+  margin-bottom: 1rem;
+}
+
+
+    .right {
+      padding: 0 1rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .right-content {
+      flex: 1; /* take remaining height */
+    }
+
+    .text-image {
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+      margin-bottom: 1rem;
+              pointer-events: none;
+
+    }
+
+    .description {
+      font-size: 1rem;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Tablets */
+    @media (max-width: 1024px) {
+       .container {
+        flex-direction: column;
+        align-items: center; /* align all to left */
+      }
+      .left img,
+      .right,
+      .text-image {
+        max-width: 100%;
+        text-align: center;
+      }
+      
+      
+        h2 {
+        padding-left: 1rem;
+      }
+      body {
+            padding-top: 5rem;
+        }
+        
+    }
+    /* Phones */
+    @media (max-width: 600px) {
+        body {
+            padding-top: 5rem;
+        }
+      h2 {
+        font-size: 2rem;
+        padding-left: 1rem;
+      }
+      
+      .description {
+        font-size: 0.9rem;
+      }
+      
+      
+    }
+    footer.site-footer {
+  width: 100%;
+  background: #000;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  position: relative;
+  bottom: 0;
+   margin-right: 0.5rem;  /* ✅ add space on the right */
+  margin-bottom: 0.5rem; /* ✅ add space at the bottom */
+}
+
+footer.site-footer img {
+  max-height: 80px; /* ✅ match homescreen */
+  height: auto;
+  width: auto;
+}
+
+/* ✅ Mobile responsive */
+@media (max-width: 480px) {
+  footer.site-footer img {
+    max-height: 50px; /* shrink logo on mobile, same as homescreen */
+     margin-right: 0.5rem;  /* keep same spacing */
+    margin-bottom: 0.5rem;
+  }
+}
+/* Appear animation */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+h2, .container, footer.site-footer {
+  opacity: 0; /* start hidden */
+  animation: fadeUp 0.8s ease forwards;
+}
+
+h2 {
+  animation-delay: 0.2s;
+}
+
+.container {
+  animation-delay: 0.6s;
+}
+
+footer.site-footer {
+  animation-delay: 1s;
+}
+
+/* --- PROJECT IMAGES COLLAGE --- */
+.projects {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 1100px;
+  margin: 1.5rem auto;
+  justify-items: center;
+}
+
+.projects img {
+  width: 100%;
+  height: auto;       /* ✅ keeps full image aspect ratio */
+  max-height: 300px;  /* ✅ prevent giant images */
+  border-radius: 10px;
+pointer-events: auto;  transition: transform 0.3s ease;
+  object-fit: contain; /* ✅ fit inside grid cell without crop */
+}
+
+.projects img:hover {
+  transform: scale(1.03); /* gentle zoom */
+}
+/* --- LAYOUT --- */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1100px;
+  margin: auto;
+  padding: 1rem;
+}
+
+.left, .right {
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+
+/* YouTube iframe */
+.youtube iframe {
+  width: 100%;
+  max-width: 1100px;
+  height: 681px;
+  border-radius: 10px;
+  margin: 1rem auto;
+  display: block;
+}
+
+/* --- MOBILE FRIENDLY --- */
+@media (max-width: 768px) {
+  .projects {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.4rem;
+  }
+
+  .projects img {
+    max-height: 220px;
+  }
+  .youtube iframe {
+  height: 100%;
+  
+}
+}
+
+@media (max-width: 480px) {
+  .projects {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.3rem;
+  }
+.youtube iframe {
+  height: 100%;
+  
+}
+  .projects img {
+    max-height: 180px;
+  }
+}
+.returned {
+  display: flex;            /* turn it into flexbox */
+  justify-content: flex-start; 
+  align-items: flex-start;
+  width: 100%;              /* let it stretch across */
+  max-width: 1100px;
+  margin: 0 auto;           /* center the whole row, but button stays left */
+}
+
+.return-button {
+  align-self: flex-start;  /* ⬅️ force it to left inside flex parent */
+  margin-left: 1rem;       /* spacing from left edge */
+  margin-bottom: 1rem;        /* spacing from top */
+  z-index: 1000;
+}
+
+.return-button img {
+  width: 40px;   /* adjust size */
+  height: auto;
+  filter: drop-shadow(0 0 5px rgba(0,0,0,0.7)); /* ✅ make it visible on all backgrounds */
+  transition: transform 0.2s ease;
+  cursor: none;
+}
+
+.return-button img:hover {
+  transform: scale(1.1);
+}
+
+.image-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image-overlay.active {
+  visibility: visible;
+  opacity: 1;
+}
+
+.image-overlay img {
+  max-width: 85%;
+  max-height: 85%;
+  border-radius: 10px;
+}
+
+/* Back button */
+.back-button {
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  width: 40px;
+  height: 40px;
+  transition: transform 0.2s ease;
+}
+
+.back-button:hover {
+  transform: scale(1.1);
+}

@@ -1,0 +1,215 @@
+ body {
+      margin: 0;
+      background: black;
+      color: white;
+      font-family: 'New Rocker', cursive;
+       overflow-y: scroll; /* keep vertical scrolling */
+  scrollbar-width: none; /* Firefox */
+         cursor: none; /* hide default cursor */
+
+
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge hide scrollbar */
+}
+    /* Hero */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh; /* ✅ full screen height */
+      overflow: hidden;
+    }
+
+    .hero img.main {
+      width: 100%;
+      height: 100%; /* ✅ fill height */
+      object-fit: cover; /* ✅ crop nicely */
+      display: block;
+    }
+
+    /* Animations */
+    .hero img.main,
+    section {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+    .hero img.main.show,
+    section.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Logo container */
+    .logo-container {
+      position: absolute;
+      top: 70%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      width: 59.3vw;
+      max-width: 1138px;
+    }
+    .logo-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+    .logo-container h1 {
+      margin: 0;
+      font-size: 3vw;
+      font-family: 'UnifrakturMaguntia', cursive;
+      text-align: right;
+    }
+
+    .logo-inner {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+    .logo-inner.show { opacity: 1; transform: translateY(0); }
+    .logo-inner.hide { opacity: 0; transform: translateY(0); }
+
+    section {
+      padding: 2rem 1rem;
+    }
+
+    h2 {
+      font-family: 'UnifrakturMaguntia', cursive;
+      font-size: 3rem;
+      margin: 2rem 1rem 3rem 1rem;
+      font-weight: normal;
+      text-align: left;
+      border-top: 1px solid #555;
+      padding: 0.5rem 0;
+    }
+
+    #social { margin-bottom: 0; }
+
+    /* What I do cards */ .cards { display: grid; grid-template-columns: repeat(6, minmax(250px, 1fr)); margin-left: 1rem; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; /* Firefox */ padding-left: 1rem; padding-top: 1rem; padding-bottom: 1rem; /* add a bit of spacing to avoid cutoff */ } .cards::-webkit-scrollbar { display: none; } .card { background: #1a1a1a; aspect-ratio: 4 / 3; /* keep 4:3 ratio */ border: 1px solid #444; /* thin stroke */ border-radius: 8px; padding: 1rem; box-sizing: border-box; width: 280px; max-width: 90%; text-align: left; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; transition: transform 0.3s ease, box-shadow 0.3s ease; } /* Prevent page scroll from interfering when inside */ .card:hover { transform: scale(1.1); /* grow */ z-index: 5; box-shadow: 0 8px 20px rgba(0,0,0,0.6); } .card h3 { margin: 0 0 0.5rem 0; font-size: 1.2rem; font-family: 'New Rocker', cursive; } .card p { font-size: 0.9rem; line-height: 1.4; }
+    /* Projects */
+    .projects {
+      margin-left: 1rem;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(220px, 1fr));
+      gap: 1rem;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      padding: 1rem;
+    }
+    .projects::-webkit-scrollbar { display: none; }
+
+    .project {
+      position: relative;
+      aspect-ratio: 4 / 3;
+      border: 1px solid #444;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .project::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      transition: background 0.3s ease;
+      z-index: 1;
+    }
+    .project:hover::before { background: rgba(0,0,0,0); }
+    .project:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
+    .project img { width: 100%; height: 100%; object-fit: cover; }
+    .project span {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      font-size: 2rem;
+      font-family: 'New Rocker', cursive;
+      z-index: 2;
+    }
+
+    /* Social */
+    .social-section { text-align: left; margin-left: 1rem; }
+    .social-section p { font-size: 1rem; margin-left: 1rem; }
+    .socials { margin-left: 1rem; display: flex; gap: 2rem; margin-top: 1rem; }
+    .socials img { width: 40px; height: 40px; transition: transform 0.3s ease; }
+    .socials img:hover { transform: scale(1.3); }
+
+    /* ✅ Mobile adjustments */
+@media (max-width: 768px) {
+  .logo-container { width: 80vw; top: 65%; }
+  .logo-container h1 { font-size: 5vw; }
+  h2 { font-size: 2rem; }
+
+  /* smaller cards, tighter spacing */
+  .cards {
+    gap: 0.5rem;       /* reduce spacing */
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .card { width: 220px; padding: 0.8rem; margin-right: 0.5rem; }
+  .card h3 { font-size: 0.9rem; }
+  .card p { font-size: 0.8rem; }
+
+  .project span { font-size: 1.2rem; }
+}
+
+.cards .card {
+  flex: 1 1 calc(33.333% - 1rem); /* default: 3 per row on desktop */
+  aspect-ratio: 4 / 3;            /* ✅ lock card ratio */
+  display: flex;
+  justify-content: center;
+  border-radius: 12px;
+  background: #111;               /* your card bg */
+  color: #fff;
+  overflow: hidden;
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  .cards .card {
+    flex: 1 1 calc(50% - 0.7rem); /* 2 per row */
+    aspect-ratio: 4 / 3;          /* ✅ still locked */
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .cards .card {
+    flex: 1 1 100%;               /* 1 per row */
+    aspect-ratio: 4 / 3;          /* ✅ still locked */
+  }
+}
+
+/* Footer styling */
+.site-footer {
+  width: 100%;
+  max-height: 85px;
+  background: #000;        /* black background */
+  display: flex;
+  justify-content: flex-end; /* right align */
+  align-items: center;
+  padding: 0.5rem 1rem;    /* some breathing room */
+  box-sizing: border-box;
+}
+
+.site-footer img {
+  max-height: 80px;
+  height: auto;
+  width: auto;
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .site-footer img {
+    max-height: 50px; /* shrink logo on mobile */
+  }
+}
+.explosion-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999999;
+}

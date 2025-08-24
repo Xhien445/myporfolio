@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashinu Portfolio</title>
+    <link rel="icon" type="image/png" href="images/logohead.png" sizes="32x32">
+
+  <style>
+    body {
+      margin: 0;
+      background: black; /* site background */
+      flex-direction: column;
+      min-height: 100vh;
+       overflow: hidden; /* 🚫 hides scroll bar */
+       cursor: none; /* hide default cursor */
+    }
+    /* Hide the default cursor only on desktop */
+  body.desktop {
+    cursor: none;
+  }
+    #custom-cursor {
+    position: fixed;
+    width: 32px;
+    height: 32px;
+    background: url("pages/images/mousecursor.png") no-repeat center/contain;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease;
+    z-index: 9999;
+    display: none; /* hidden by default, enabled for desktop */
+  }
+    #headerFrame {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      border: none;
+      background: transparent;
+      z-index: 9999;
+      pointer-events: auto;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3); /* 🔑 thin stroke */
+    }
+   
+    /* Homescreen iframe expands naturally */
+    #contentFrame {
+      flex: 1;
+      width: 100%;
+      border: none;
+      min-height: 100vh; /* ensures screen fill if short */
+    }
+
+ 
+  </style>
+</head>
+<body>
+
+  <!-- Transparent header with bottom border -->
+  <iframe id="headerFrame" src="header.html" allowtransparency="true"></iframe>
+
+ 
+    <!-- Homescreen -->
+    <iframe src="pages/homescreen.html" id="contentFrame" scrolling="yes"></iframe>
+
+<div id="custom-cursor"></div>
+   <script>
+    // Listen for navigation messages from header.html
+    window.addEventListener("message", function(event) {
+      if (event.data.page) {
+        document.getElementById("contentFrame").src = event.data.page;
+      }
+    });
+    const cursor = document.getElementById("custom-cursor");
+  
+    // Detect desktop (no touch support)
+  const isDesktop = !("ontouchstart" in window || navigator.maxTouchPoints > 0);
+
+  if (isDesktop) {
+    document.body.classList.add("desktop");
+    cursor.style.display = "block";
+
+  // Move cursor
+  function moveCursor(x, y) {
+    cursor.style.left = x + "px";
+    cursor.style.top = y + "px";
+  }
+
+  // Listen mouse in parent
+  document.addEventListener("mousemove", e => moveCursor(e.clientX, e.clientY));
+
+  document.addEventListener("mousedown", () => {
+    cursor.style.transform = "translate(-50%, -50%) rotate(-20deg)";
+  });
+  document.addEventListener("mouseup", () => {
+    cursor.style.transform = "translate(-50%, -50%) rotate(0deg)";
+  });
+
+// Hide cursor when leaving window
+document.addEventListener("mouseleave", () => {
+  cursor.style.display = "none";
+});
+document.addEventListener("mouseenter", () => {
+  cursor.style.display = "block";
+});
+
+  // Listen messages from iframes
+  window.addEventListener("message", (e) => {
+    if (e.data.type === "mousemove") moveCursor(e.data.x, e.data.y);
+    if (e.data.type === "mousedown") cursor.style.transform = "translate(-50%, -50%) rotate(-20deg)";
+    if (e.data.type === "mouseup") cursor.style.transform = "translate(-50%, -50%) rotate(0deg)";
+  });
+  }
+  </script>
+</body>
+</html>

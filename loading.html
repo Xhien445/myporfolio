@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading...</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: #000; /* black background */
+      cursor: none;
+    }
+#custom-cursor {
+    position: fixed;
+    width: 32px;
+    height: 32px;
+    background: url("pages/images/mousecursor.png") no-repeat center/contain;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease;
+    z-index: 9999;
+        display: none; /* hidden by default, enabled for desktop */
+}
+    .logo {
+      width: 120px;   /* adjust size if needed */
+      height: auto;
+      animation: spin 1s ease-in-out infinite; /* fast with easing */
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <img src="images/load screen/logo3D845px.png" alt="Loading Logo" class="logo">
+<div id="custom-cursor"></div>
+
+  <script>
+    // Wait 3 seconds, then redirect to index.html
+    setTimeout(() => {
+      window.location.href = "index.html";
+    }, 3000);
+    const cursor = document.getElementById("custom-cursor");
+  
+    // Detect desktop (no touch support)
+  const isDesktop = !("ontouchstart" in window || navigator.maxTouchPoints > 0);
+
+  if (isDesktop) {
+    document.body.classList.add("desktop");
+    cursor.style.display = "block";
+
+  // Move cursor
+  function moveCursor(x, y) {
+    cursor.style.left = x + "px";
+    cursor.style.top = y + "px";
+  }
+
+  // Listen mouse in parent
+  document.addEventListener("mousemove", e => moveCursor(e.clientX, e.clientY));
+
+  document.addEventListener("mousedown", () => {
+    cursor.style.transform = "translate(-50%, -50%) rotate(-20deg)";
+  });
+  document.addEventListener("mouseup", () => {
+    cursor.style.transform = "translate(-50%, -50%) rotate(0deg)";
+  });
+
+// Hide cursor when leaving window
+document.addEventListener("mouseleave", () => {
+  cursor.style.display = "none";
+});
+document.addEventListener("mouseenter", () => {
+  cursor.style.display = "block";
+});}
+  </script>
+</body>
+</html>

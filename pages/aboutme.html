@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>About Me</title>
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=New+Rocker&display=swap" rel="stylesheet">
+  
+   <link rel="stylesheet" href="aboutme.css">
+</head>
+<body>
+  <div class="main">
+    <h2>About Me</h2>
+    <div class="container">
+      <!-- Left Side -->
+      <div class="left">
+        <img src="images/about me/aboutme.jpg" alt="About Me Image">
+<div id="slogan" data-text='"Live fast die young duh"'>
+  "Live fast die young duh"
+</div>
+      </div>
+
+      <!-- Right Side -->
+      <div class="right">
+        <div class="right-content">
+          <img src="images/about me/Nguyenthixuanhientext.png" alt="Nguyen Thi Xuan Hien" class="text-image">
+          <div class="subtitle">RMIT design student.</div>
+          <div class="description">
+            Specialized in concept design for websites, animation, and character creation.
+          </div>
+          <img src="images/about me/adobe.png" alt="Adobe Tools" class="adobe">
+        </div>
+
+        <section class="social-section">
+          <p>Contact me via Instagram</p>
+          <div class="socials">
+            <img src="images/contact/insta.png" class="insta"/>
+            <img src="images/contact/youtube.png" class="youtube"/>
+            <img src="images/contact/tiktok.png" class="tiktok"/>
+          </div>
+        </section>
+        <div id="spacing">forspacingonly</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <img src="images/footer/logo3D80px.png" alt="Logo" />
+  </footer>
+
+  <script>
+    // Social links
+    document.querySelector('.socials img.tiktok').addEventListener('click', () => {
+      window.open("https://www.tiktok.com/@dashinu", "_blank");
+    });
+    document.querySelector('.socials img.youtube').addEventListener('click', () => {
+      window.open("https://www.youtube.com/channel/UCsqBLPN6NyNUVo4mKp1PF3g", "_blank");
+    });
+    document.querySelector('.socials img.insta').addEventListener('click', () => {
+      window.open("https://www.instagram.com/dashinu445/", "_blank");
+    });
+     // Forward mouse events to parent for custom cursor
+  document.addEventListener("mousemove", (e) => {
+    window.parent.postMessage({ type: "mousemove", x: e.clientX, y: e.clientY }, "*");
+  });
+  document.addEventListener("mousedown", () => {
+    window.parent.postMessage({ type: "mousedown" }, "*");
+  });
+  document.addEventListener("mouseup", () => {
+    window.parent.postMessage({ type: "mouseup" }, "*");
+  });
+
+
+const slogan = document.getElementById("slogan");
+const original = slogan.textContent;
+slogan.textContent = "";
+
+// Build inline spans in normal flow
+[...original].forEach(ch => {
+  const span = document.createElement("span");
+  span.textContent = ch;
+  span.style.display = "inline-block";
+  slogan.appendChild(span);
+});
+
+slogan.addEventListener("click", () => {
+  const letters = slogan.querySelectorAll("span");
+
+  // 1) Create top-level overlay
+  const layer = document.createElement("div");
+  layer.className = "explosion-layer";
+  document.body.appendChild(layer);
+
+  // Match font/appearance
+  const cs = getComputedStyle(slogan);
+
+  // 2) Clone each letter into the overlay at its exact screen position
+  const clones = [];
+  letters.forEach(letter => {
+    const r = letter.getBoundingClientRect(); // viewport coords
+    const ghost = document.createElement("span");
+    ghost.textContent = letter.textContent;
+    ghost.style.position = "absolute";
+    ghost.style.left = r.left + "px";
+    ghost.style.top  = r.top  + "px";
+    ghost.style.whiteSpace = "pre";
+    ghost.style.fontFamily = cs.fontFamily;
+    ghost.style.fontSize   = cs.fontSize;
+    ghost.style.fontWeight = cs.fontWeight;
+    ghost.style.letterSpacing = cs.letterSpacing;
+    ghost.style.lineHeight = cs.lineHeight;
+    ghost.style.color = cs.color;
+    layer.appendChild(ghost);
+    clones.push(ghost);
+  });
+
+  // 3) Hide the rest of the page instantly (overlay remains visible)
+  document.body.classList.add("hide-content"); // relies on your CSS:
+  // body.hide-content .main, body.hide-content footer { display: none; }
+
+  // 4) Animate the clones outward across the whole screen
+  requestAnimationFrame(() => {
+    clones.forEach((ghost, i) => {
+      const x = (Math.random() - 0.5) * window.innerWidth  * 2;
+      const y = (Math.random() - 0.5) * window.innerHeight * 2;
+      const r = (Math.random() - 0.5) * 1440;
+
+      ghost.style.transition = "transform 1.2s ease-out, opacity 1.2s ease-out, filter 1.2s ease-out";
+      ghost.style.transform  = `translate(${x}px, ${y}px) rotate(${r}deg) scale(${1 + Math.random()*1.5})`;
+      ghost.style.opacity    = "0";
+      ghost.style.filter     = "blur(2px)";
+    });
+  });
+
+  // 5) Cleanup overlay after the animation
+  setTimeout(() => layer.remove(), 1000);
+});
+
+
+  </script>
+</body>
+</html>

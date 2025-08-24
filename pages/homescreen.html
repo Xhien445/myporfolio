@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashinu Portfolio</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=New+Rocker&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage-compat.js"></script>
+
+<script>
+  // 🔥 Your Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyAZh2qbNcT9L-6-lWFOdgm4b_px2x_7Z1E",
+    authDomain: "porfoliodashinu.firebaseapp.com",
+    projectId: "porfoliodashinu",
+    storageBucket: "porfoliodashinu.appspot.com",
+    messagingSenderId: "367284047810",
+    appId: "1:367284047810:web:bdfd4abe80a8a193efd05b",
+    measurementId: "G-KTBK4H7ZB3"
+  };
+
+  // ✅ Init compat SDK
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  async function loadProjects() {
+  const container = document.querySelector(".projects");
+  try {
+    const snapshot = await db.collection("projects").get();
+
+    if (snapshot.empty) {
+      console.warn("⚠️ No projects found in Firestore.");
+      return;
+    }
+
+   snapshot.forEach((doc) => {
+  const docId = doc.id;
+
+  // 🚫 Skip if document ID is purely numbers
+  if (/^\d+$/.test(docId)) {
+    console.log("Skipping numeric doc:", docId);
+    return;
+  }
+
+  const data = doc.data();
+  console.log("✅ Loaded project:", data);
+
+  const projectDiv = document.createElement("div");
+  projectDiv.classList.add("project");
+
+  const img = document.createElement("img");
+  let url = (data.image || "").replace(/^"+|"+$/g, "");
+  img.src = url;
+  img.alt = data.name || "project";
+
+  const span = document.createElement("span");
+  span.textContent = data.name || "(no name)";
+
+  // ✅ Make project clickable
+  projectDiv.addEventListener("click", () => {
+    window.location.href = `projectdetail.html?id=${docId}`;
+  });
+
+  projectDiv.appendChild(img);
+  projectDiv.appendChild(span);
+  container.appendChild(projectDiv);
+});
+
+
+  } catch (err) {
+    console.error("❌ Error fetching projects:", err);
+  }
+}
+
+
+
+</script>
+
+   <link rel="stylesheet" href="homescreen.css">
+
+  
+</head>
+<body>
+  <!-- Hero -->
+  <div class="hero">
+    <img class="main" src="images/homescreen/main screen image.png" alt="Main Image"/>
+    <div class="logo-container">
+      <div class="logo-inner">
+        <img src="images/homescreen/Dashinutext.png" alt="Dashinu Text"/>
+        <h1>Portfolio</h1>
+      </div>
+    </div>
+  </div>
+
+  <!-- What I do --> <section> <h2>What I do</h2> <div class="cards-wrapper"> <div class="cards"> <div class="card"> <h3>Web design & develop</h3> <p>Creating and building websites from visual design to functional development.</p> </div> <div class="card"> <h3>Character & Background design</h3> <p>Creating original characters and immersive environments.</p> </div> <div class="card"> <h3>VTuber design & rigging</h3> <p>Designing and setting up live 2D avatars for streaming.</p> </div> <div class="card"> <h3>Drawings</h3> <p>Hand-drawn artworks and illustrations.</p> </div> <div class="card"> <h3>Animation</h3> <p>Bringing stories and ideas to life through motion.</p> </div> <div class="card"> <h3>Photography & Video</h3> <p>Visual storytelling with photography and film.</p> </div> </div> </div> </section>
+
+  <!-- Projects -->
+  <section>
+    <h2>Some of my projects</h2>
+    <div class="projects"></div>
+
+  </section>
+
+  <!-- Social accounts -->
+  <section class="social-section">
+    <h2 id="social">Social accounts</h2>
+    <p>Contact me via Instagram</p>
+    <div class="socials">
+      <img src="images/contact/insta.png" class="insta"/>
+      <img src="images/contact/youtube.png" class="youtube"/>
+      <img src="images/contact/tiktok.png" class="tiktok"/>
+    </div>
+    <footer class="site-footer">
+  <img src="images/footer/logo3D80px.png" alt="Logo" />
+</footer>
+
+  </section>
+
+
+  <script>
+console.log("Portfolio loaded");
+
+let scrollTarget = new WeakMap();
+let scrolling = new WeakMap();
+
+function onWheel(e) {
+  const wrapper = e.currentTarget;
+
+  // If it doesn't overflow, allow normal page scroll
+  if (wrapper.scrollWidth <= wrapper.clientWidth) return;
+
+  e.preventDefault();
+
+  // Initialize maps if not yet
+  if (!scrollTarget.has(wrapper)) {
+    scrollTarget.set(wrapper, wrapper.scrollLeft);
+    scrolling.set(wrapper, false);
+  }
+
+  scrollTarget.set(wrapper, scrollTarget.get(wrapper) + e.deltaY);
+
+  if (!scrolling.get(wrapper)) {
+    requestAnimationFrame(() => smoothScroll(wrapper));
+    scrolling.set(wrapper, true);
+  }
+}
+
+function smoothScroll(wrapper) {
+  const ease = 0.15; // smaller = smoother
+  let current = wrapper.scrollLeft;
+  let target = scrollTarget.get(wrapper);
+  let diff = target - current;
+
+  wrapper.scrollLeft += diff * ease;
+
+  if (Math.abs(diff) > 0.5) {
+    requestAnimationFrame(() => smoothScroll(wrapper));
+  } else {
+    scrolling.set(wrapper, false);
+  }
+}
+
+function checkOverflow(wrapper) {
+  if (wrapper.scrollWidth > wrapper.clientWidth) {
+    wrapper.addEventListener('wheel', onWheel, { passive: false });
+  } else {
+    wrapper.removeEventListener('wheel', onWheel);
+  }
+}
+
+function initScrollSections() {
+  const sections = document.querySelectorAll('.cards, .projects');
+  sections.forEach(wrapper => checkOverflow(wrapper));
+}
+
+// Run on load + resize
+window.addEventListener('load', initScrollSections);
+window.addEventListener('resize', initScrollSections);
+// Social links
+document.querySelector('.socials img.tiktok').addEventListener('click', () => {
+  window.open("https://www.tiktok.com/@dashinu?_r=1&_d=secCgYIASAHKAESPgo8jJcK1fSxVBE7v6A9ajJCWZgf2jPrxEKeR%2FaG%2BTZSkfDPK%2F2QjLCSum4mA02wmtkQLC5%2FHQ5m90ZyxlPUGgA%3D&_svg=1&checksum=341a0eb85610654fd606af85bbeeb0269a433ab46e75ca1d00f4b4ae562d8f29&sec_uid=MS4wLjABAAAASQYj7MMG3ZNLMEoN-vetr4h-hpu1Xj3TrEbR0nIuguc&sec_user_id=MS4wLjABAAAASQYj7MMG3ZNLMEoN-vetr4h-hpu1Xj3TrEbR0nIuguc&share_app_id=1180&share_author_id=67875987240&share_link_id=890AE9AC-39E6-4033-899A-636DE4993F3D&share_scene=1&sharer_language=en&social_share_type=5&source=h5_t&timestamp=1755876917&tt_from=copy&u_code=jlbgm9i0&ug_btm=b0%2Cb0&user_id=67875987240&utm_campaign=client_share&utm_medium=ios&utm_source=copy", "_blank");
+});
+
+document.querySelector('.socials img.youtube').addEventListener('click', () => {
+  window.open("https://www.youtube.com/channel/UCsqBLPN6NyNUVo4mKp1PF3g", "_blank");
+});
+
+document.querySelector('.socials img.insta').addEventListener('click', () => {
+  window.open("https://www.instagram.com/dashinu445/", "_blank");
+});
+// Fade in hero elements on load
+window.addEventListener('load', () => {
+  // Show logo first
+  document.querySelector('.logo-inner').classList.add('show');
+
+  // Then fade in hero main image
+  setTimeout(() => {
+    const heroImg = document.querySelector('.hero img.main');
+    if (heroImg) heroImg.classList.add('show');
+  }, 600);
+});
+
+// Intersection Observer for sections
+const sections = document.querySelectorAll('section');
+const logoInner = document.querySelector('.logo-inner'); // inner logo, stays centered
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('show'); // fade in section (what I do, projects, socials, etc.)
+
+      // Hide logo once we leave the hero section
+      if (entry.target !== document.querySelector('.hero')) {
+        logoInner.classList.add('hide');
+      }
+    } else {
+      entry.target.classList.remove('show');
+
+      // If we're near the very top, show the logo again
+      if (window.scrollY < window.innerHeight / 2) {
+        logoInner.classList.remove('hide');
+      }
+    }
+  });
+}, { threshold: 0.2 });
+
+// Observe all sections
+sections.forEach(section => observer.observe(section));
+  document.addEventListener("mousemove", (e) => {
+    window.parent.postMessage({ type: "mousemove", x: e.clientX, y: e.clientY }, "*");
+  });
+  document.addEventListener("mousedown", () => {
+    window.parent.postMessage({ type: "mousedown" }, "*");
+  });
+  document.addEventListener("mouseup", () => {
+    window.parent.postMessage({ type: "mouseup" }, "*");
+  });
+loadProjects();
+
+function explodeCard(card) {
+  // 1. Create overlay layer
+  const layer = document.createElement("div");
+  layer.className = "explosion-layer";
+  document.body.appendChild(layer);
+
+  // 2. Get card text content as characters
+  const textNodes = [];
+  const walker = document.createTreeWalker(card, NodeFilter.SHOW_TEXT, null);
+  while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+  const chars = [];
+
+  textNodes.forEach(node => {
+    [...node.textContent].forEach((ch, i) => {
+      const range = document.createRange();
+      range.setStart(node, i);
+      range.setEnd(node, i + 1);
+      const rect = range.getBoundingClientRect();
+
+      const span = document.createElement("span");
+      span.textContent = ch;
+      span.style.position = "absolute";
+      span.style.left = rect.left + "px";
+      span.style.top = rect.top + "px";
+      span.style.font = "inherit";
+      span.style.color = "inherit";
+      layer.appendChild(span);
+      chars.push(span);
+    });
+  });
+
+  // 3. Fade out the card itself
+  card.style.transition = "opacity 0.5s ease";
+  card.style.opacity = "0";
+
+  // 4. Animate letters outward
+  requestAnimationFrame(() => {
+    chars.forEach((span, i) => {
+      const x = (Math.random() - 0.5) * window.innerWidth * 2;
+      const y = (Math.random() - 0.5) * window.innerHeight * 2;
+      const r = (Math.random() - 0.5) * 1080;
+
+      span.style.transition = "transform 1.2s ease-out, opacity 1.2s ease-out";
+      span.style.transform = `translate(${x}px, ${y}px) rotate(${r}deg) scale(${1 + Math.random()*1.5})`;
+      span.style.opacity = "0";
+    });
+  });
+
+  // 5. Cleanup after animation
+  setTimeout(() => {
+    layer.remove();
+    card.remove(); // fully remove card from DOM
+  }, 1000);
+}
+
+// Attach to all cards
+document.querySelectorAll(".card").forEach(card => {
+  card.addEventListener("click", (e) => {
+    e.stopPropagation();
+    explodeCard(card);
+  });
+});
+</script>
+
+
+</body>
+</html>

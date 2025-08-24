@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>All Projects</title>
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=New+Rocker&display=swap" rel="stylesheet">
+ <script type="module">
+  // Firebase imports
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+  // Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyAZh2qbNcT9L-6-lWFOdgm4b_px2x_7Z1E",
+    authDomain: "porfoliodashinu.firebaseapp.com",
+    projectId: "porfoliodashinu",
+    storageBucket: "porfoliodashinu.appspot.com",
+    messagingSenderId: "367284047810",
+    appId: "1:367284047810:web:bdfd4abe80a8a193efd05b",
+    measurementId: "G-KTBK4H7ZB3"
+  };
+
+  // Init Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  // ============================
+  // 1. Fetch drawings from Firestore
+  // ============================
+  async function loadDrawings() {
+    const slideshow = document.querySelector(".slideshow");
+    slideshow.innerHTML = "";
+
+    const docRef = doc(db, "drawings", "drawings");
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      console.warn("No drawings found in Firestore!");
+      return;
+    }
+
+    const data = docSnap.data();
+    const urls = Object.values(data);
+
+    const allUrls = [...urls, ...urls];
+    allUrls.forEach((url, i) => {
+      const img = document.createElement("img");
+      img.src = url;
+      img.alt = `Drawing ${i+1}`;
+      slideshow.appendChild(img);
+    });
+
+    // ✅ Enable overlay after images are appended
+    enableImageOverlay();
+  }
+
+  // ============================
+// 2. Fetch projects from Firestore
+// ============================
+async function loadProjects() {
+  const container = document.querySelector(".projects");
+  container.innerHTML = "";
+
+  const querySnapshot = await getDocs(collection(db, "projects"));
+  querySnapshot.forEach((docSnap) => {
+    const data = docSnap.data();
+
+    const projectDiv = document.createElement("div");
+    projectDiv.classList.add("project");
+
+    const img = document.createElement("img");
+    img.src = data.image || "images/fallback.png";
+    img.alt = data.name || "project";
+
+    const span = document.createElement("span");
+    span.textContent = data.name || "(no name)";
+
+    projectDiv.appendChild(img);
+    projectDiv.appendChild(span);
+    container.appendChild(projectDiv);
+
+    // ✅ Make project clickable → open projectdetail.html with ?id=<doc.id>
+    projectDiv.addEventListener("click", () => {
+      window.location.href = `projectdetail.html?id=${docSnap.id}`;
+    });
+  });
+}
+
+
+  // ============================
+  // 3. Overlay logic
+  // ============================
+  function enableImageOverlay() {
+    const overlay = document.getElementById("imageOverlay");
+    const overlayImage = document.getElementById("overlayImage");
+    const backButton = document.getElementById("backButton");
+
+    document.querySelectorAll(".slideshow img").forEach(img => {
+      img.addEventListener("click", () => {
+        overlay.classList.add("active");
+        overlayImage.src = img.src;
+      });
+    });
+
+    // Back button closes overlay
+    backButton.addEventListener("click", () => {
+      overlay.classList.remove("active");
+      overlayImage.src = "";
+    });
+  }
+
+  // Run both
+  loadDrawings();
+  loadProjects();
+</script>
+
+
+ <link rel="stylesheet" href="allprojects.css">
+</head>
+<body>
+  <div class="main">
+    <h2>My drawings of hobby</h2>
+    <div class="container">
+      <div class="slideshow">
+       
+        
+      </div>
+    </div>
+    <h2>All of my Projects</h2>
+    <section>
+
+  <div class="projects"></div>
+</section>
+
+  </div>
+
+  <footer class="site-footer">
+    <img src="images/footer/logo3D80px.png" alt="Logo" />
+  </footer>
+<div class="image-overlay" id="imageOverlay">
+  <img src="images/back.png" alt="Back" class="back-button" id="backButton">
+  <img id="overlayImage" src="" alt="Fullscreen Drawing">
+</div>
+
+  <script>
+    // Run both
+  
+    // Forward mouse events to parent for custom cursor
+    document.addEventListener("mousemove", (e) => {
+      window.parent.postMessage({ type: "mousemove", x: e.clientX, y: e.clientY }, "*");
+    });
+    document.addEventListener("mousedown", () => {
+      window.parent.postMessage({ type: "mousedown" }, "*");
+    });
+    document.addEventListener("mouseup", () => {
+      window.parent.postMessage({ type: "mouseup" }, "*");
+    });
+    
+  </script>
+  <script>
+(function(){
+  // Detect if user has a fine pointer (mouse/trackpad) → excludes touch devices
+  const isDesktop = window.matchMedia("(pointer: fine)").matches;
+  if (!isDesktop) return; // 🚫 stop for mobile/tablet
+
+  const tooltip = document.createElement("div");
+  tooltip.className = "funfact-tooltip";
+  tooltip.textContent = "Fun fact: I drew all of this by my index finger on iPad.";
+  document.body.appendChild(tooltip);
+
+  let hoverTimer = null;
+  const slideshow = document.querySelector(".slideshow");
+
+  slideshow.addEventListener("mouseenter", () => {
+    hoverTimer = setTimeout(() => {
+      tooltip.style.opacity = "1";
+    }, 1000); // wait 1 sec
+  });
+
+  slideshow.addEventListener("mousemove", (e) => {
+    tooltip.style.left = e.clientX + 15 + "px";
+    tooltip.style.top = e.clientY + 15 + "px";
+  });
+
+  slideshow.addEventListener("mouseleave", () => {
+    clearTimeout(hoverTimer);
+    tooltip.style.opacity = "0";
+  });
+})();
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>About Me</title>
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=New+Rocker&display=swap" rel="stylesheet">
+
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { doc, getDoc, collection, getDocs, getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // 🔧 Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyAZh2qbNcT9L-6-lWFOdgm4b_px2x_7Z1E",
+    authDomain: "porfoliodashinu.firebaseapp.com",
+    projectId: "porfoliodashinu",
+    storageBucket: "porfoliodashinu.appspot.com",
+    messagingSenderId: "367284047810",
+    appId: "1:367284047810:web:bdfd4abe80a8a193efd05b",
+    measurementId: "G-KTBK4H7ZB3"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const params = new URLSearchParams(window.location.search);
+  const projectId = params.get("id");
+
+  async function loadProject() {
+    const container = document.querySelector(".projects");
+    const descContainer = document.querySelector(".description");
+    const youtubeContainer = document.querySelector(".youtube");
+    container.innerHTML = "";
+    descContainer.innerHTML = "";
+    youtubeContainer.innerHTML = "";
+
+    if (!projectId) {
+      container.innerHTML = "<p>No project ID provided.</p>";
+      return;
+    }
+
+    // Fetch project doc
+    const docRef = doc(db, "projects", projectId);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      container.innerHTML = "<p>Project not found.</p>";
+      return;
+    }
+
+    const data = docSnap.data();
+
+    // Title
+    const title = document.querySelector("h2");
+    if (title) title.textContent = data.name || "(no name)";
+
+    // Main image
+    if (data.image) {
+      const mainImg = document.querySelector(".left img");
+      if (mainImg) mainImg.src = data.image;
+    }
+
+    // Description
+    if (data.description) {
+      descContainer.textContent = data.description;
+    }
+
+    // Normalize YouTube link
+function getEmbedUrl(url) {
+  if (!url) return null;
+  if (url.includes("watch?v=")) {
+    return url.replace("watch?v=", "embed/");
+  }
+  if (url.includes("youtu.be/")) {
+    return url.replace("youtu.be/", "www.youtube.com/embed/");
+  }
+  if (url.includes("shorts/")) {
+    return url.replace("shorts/", "embed/");
+  }
+  return url;
+}
+
+if (data.youtube) {
+  const youtubeDiv = document.querySelector(".youtube");
+  const embedUrl = getEmbedUrl(data.youtube);
+  youtubeDiv.innerHTML = `
+    <iframe width="100%" height="315" 
+      src="${embedUrl}" 
+      frameborder="0" allowfullscreen></iframe>
+  `;
+}
+
+
+    // Subcollection images
+    const imagesRef = collection(db, `projects/${projectId}/images`);
+    const imagesSnap = await getDocs(imagesRef);
+    imagesSnap.forEach(docSnap => {
+      const imagesData = docSnap.data();
+      Object.values(imagesData).forEach(url => {
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = data.name || "project image";
+        img.classList.add("project-image");
+        container.appendChild(img);
+      });
+    });
+    
+// Enable overlay on project images
+function enableImageOverlay() {
+  const overlay = document.getElementById("imageOverlay");
+  const overlayImage = document.getElementById("overlayImage");
+  const backButton = document.getElementById("backButton");
+
+  document.querySelectorAll(".projects img").forEach(img => {
+    img.addEventListener("click", () => {
+      overlay.classList.add("active");
+      overlayImage.src = img.src;
+    });
+  });
+
+  // Close overlay on back button
+  backButton.addEventListener("click", () => {
+    overlay.classList.remove("active");
+    overlayImage.src = "";
+  });
+}
+
+// Call after images are loaded
+enableImageOverlay();
+
+
+  }
+
+  // ✅ Call the function
+  loadProject();
+</script>
+
+ <link rel="stylesheet" href="projectdetail.css">
+  
+</head>
+<body>
+  
+  <div class="main">
+    <div class="returned">
+    <a href="javascript:void(0)" class="return-button" onclick="window.history.back()">
+  <img src="images/back.png" alt="Back">
+  
+</a>
+    </div>
+    <h2>Loading...</h2>
+    <div class="container">
+      <!-- Left Side -->
+      <div class="left">
+        <div class="description">Still loading...</div>
+        <img src="images/loading.png" alt="About Me Image">
+
+      </div>
+
+      <!-- Right Side -->
+      <div class="right">
+        <div class="right-content">
+          <div class="youtube"></div>
+<!-- Collage -->
+<div class="projects" id="extra-images"></div>
+
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <img src="images/footer/logo3D80px.png" alt="Logo" />
+  </footer>
+<div class="image-overlay" id="imageOverlay">
+  <img src="images/back.png" alt="Back" class="back-button" id="backButton">
+  <img id="overlayImage" src="" alt="Fullscreen Project Image">
+</div>
+
+  <script>
+    
+     // Forward mouse events to parent for custom cursor
+  document.addEventListener("mousemove", (e) => {
+    window.parent.postMessage({ type: "mousemove", x: e.clientX, y: e.clientY }, "*");
+  });
+  document.addEventListener("mousedown", () => {
+    window.parent.postMessage({ type: "mousedown" }, "*");
+  });
+  document.addEventListener("mouseup", () => {
+    window.parent.postMessage({ type: "mouseup" }, "*");
+  });
+  </script>
+</body>
+</html>
