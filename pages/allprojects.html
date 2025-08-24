@@ -124,7 +124,7 @@ async function loadProjects() {
     <h2>My drawings of hobby</h2>
     <div class="container">
       <div class="slideshow">
-       
+       <img src="images/loading.png">
         
       </div>
     </div>
@@ -189,6 +189,18 @@ async function loadProjects() {
     tooltip.style.opacity = "0";
   });
 })();
+
+// ✅ Safari repaint fix for slideshow
+  window.addEventListener("load", () => {
+    const ss = document.querySelector(".slideshow");
+    if (ss) {
+      setTimeout(() => {
+        ss.style.display = "none";
+        void ss.offsetHeight; // force reflow
+        ss.style.display = "block";
+      }, 500); // wait a little after load
+    }
+  });
 </script>
 
 
