@@ -324,3 +324,17 @@ pointer-events: auto;  transition: transform 0.3s ease;
 .back-button:hover {
   transform: scale(1.1);
 }
+.visit-link {
+  display: inline-block;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: bold;
+  transition: transform 0.2s ease, color 0.3s ease;
+cursor: none;}
+
+.visit-link:hover {
+  transform: scale(1.05);
+  color: #b3b3b3;
+}
